@@ -25,7 +25,7 @@ def LBP(img):
 
 
 # 讀入圖片
-image = cv2.imread("1.jpg")
+image = cv2.imread("3.jpg")
 image = cv2.resize(image, (720, 480))
 
 # 圖片轉灰階
@@ -34,11 +34,11 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # ===========================對整張圖做LBP,並繪製直方圖=========================
 
-# LBP处理
+# LBP處理
 LBP_all = LBP(gray)
-all = cv2.calcHist([gray], [0], None, [256], [0, 256])
+all = cv2.calcHist([LBP_all], [0], None, [256], [0, 256])
 # 建立新的窗口
-fig = plt.figure(figsize=(10, 6))
+fig = plt.figure(figsize=(15, 6))
 
 plt.subplot(234), plt.imshow(LBP_all, 'gray')
 plt.subplot(235), plt.imshow(gray, 'gray')
@@ -47,11 +47,11 @@ plt.xlim([0, 256])
 plt.show()
 # =============================================================================
 
-# 藍色框框
+# 藍色框框(指定區域)
 x = 400
 y = 330
 
-# 綠色框框
+# 綠色框框(對比區域)
 a = 300
 b = 330
 
@@ -70,24 +70,30 @@ cv2.rectangle(img_draw, (x, y), (x+w, y+h), (255, 0, 0), 4)
 cv2.rectangle(img_draw, (a, b), (a+w, b+h), (0, 255, 0), 4)
 
 cv2.imshow("cut_image", img_draw)
-# ================================繪製直方圖====================================
+# ===========================對裁切出的區域做LBP,並繪製直方圖=========================
 
-compare1 = cv2.calcHist([gray_cut1], [0], None, [256], [0, 256])
-compare2 = cv2.calcHist([gray_cut2], [0], None, [256], [0, 256])
+# LBP處理
+LBP_cut1 = LBP(gray_cut1)
+LBP_cut2 = LBP(gray_cut2)
+
+compare1 = cv2.calcHist([LBP_cut1], [0], None, [256], [0, 256])
+compare2 = cv2.calcHist([LBP_cut2], [0], None, [256], [0, 256])
 # 建立新的窗口
 fig = plt.figure(figsize=(10, 6))
 
 plt.subplot(231), plt.imshow(gray_cut1, 'gray')
-plt.subplot(232), plt.imshow(gray_cut2, 'gray')
-plt.subplot(234), plt.plot(compare1, color='b')
-plt.subplot(235), plt.plot(compare2, color='g')
+plt.subplot(232), plt.imshow(LBP_cut1, 'gray')
+plt.subplot(233), plt.plot(compare1, color='b')
+plt.subplot(234), plt.imshow(gray_cut2, 'gray')
+plt.subplot(235), plt.imshow(LBP_cut2, 'gray')
+plt.subplot(236), plt.plot(compare2, color='g')
 plt.xlim([0, 256])
 plt.show()
 # =============================================================================
 
 # 計算圖像直方圖
-calculate1, bins = np.histogram(gray_cut1.ravel(), 256, [0, 256])
-calculate2, bins = np.histogram(gray_cut2.ravel(), 256, [0, 256])
+calculate1, bins = np.histogram(LBP_cut1.ravel(), 256, [0, 256])
+calculate2, bins = np.histogram(LBP_cut2.ravel(), 256, [0, 256])
 
 # 取出現最多的值
 # x_axis1 = bins[np.argmax(calculate1)]
@@ -106,17 +112,19 @@ avg1 = sum(top_three_x1) / 3
 avg2 = sum(top_three_x2) / 3
 
 
-print(f"範圍一(藍)出現前三多的值為{top_three_x1},平均值為" + format(avg1, ".2f"))
-print(f"範圍二(綠)出現前三多的值為{top_three_x2},平均值為" + format(avg2, ".2f"))
+print(f"指定區域(藍)出現前三多的值為{top_three_x1},平均值為" + format(avg1, ".2f"))
+print(f"對比區域(綠)出現前三多的值為{top_three_x2},平均值為" + format(avg2, ".2f"))
 
-# 平均相減取絕對值
-comparison = abs(avg1 - avg2)
+# 相除
+rate = avg2/avg1
+print("相似度為:" , rate)
+
 
 # 判斷是否相似
-if (comparison > 20):
-    print("範圍一(藍)跟範圍二(綠)不相似")
+if (rate >= 1 and rate <= 1.5):
+    print("指定區域(藍)跟對比區域(綠)相似")
 else:
-    print("範圍一(藍)跟範圍二(綠)相似")
+    print("指定區域(藍)跟對比區域(綠)不相似")
 
 
 cv2.imshow('LBP', LBP_all)
