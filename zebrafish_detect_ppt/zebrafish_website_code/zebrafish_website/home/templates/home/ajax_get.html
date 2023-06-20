@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ajax</title>
+</head>
+
+<body>
+    <h1>Create Form</h1>
+    <h2></h2>
+    <from id='post-form'>
+        <!-- {% csrf_token} -->
+        <p>name:</p>
+        <input type="text" id="name" name="name" /><br>
+        <p>email:</p>
+        <input type="text" id="email" name="email" /><br>
+        <p>bio:</p>
+        <input type="text" id="bio" name="bio" /><br>
+        <input type="submit" />
+    </from>
+</body>
+<script type="text/javascript">
+    $(document).on('submit', '#post-form', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '/create',
+            data: {
+                name: $('name').val(),
+                email: $('email').val(),
+                bio: $('bio').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                $('h2').html(data);
+            }
+        });
+    });
+</script>
+
+</html>

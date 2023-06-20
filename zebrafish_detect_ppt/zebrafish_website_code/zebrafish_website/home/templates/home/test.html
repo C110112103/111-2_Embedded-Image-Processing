@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+
+<head lang="en">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax驗證測試</title>
+
+</head>
+
+<script src="/static/jquery/jquery211.js"></script>
+
+<script>
+
+
+
+    $(function () {
+
+
+
+        $("#pu").bind('keydown', function () {
+
+            c = $("#pu").val()
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/ccc/",
+
+                data: { name: c },
+
+                dataType: "json",
+
+                success: function (data) {
+
+                    $("#p").text(data.msg)
+
+                }
+
+            });
+
+
+
+
+
+        })
+
+
+
+    })
+
+
+
+
+
+</script>
+
+<body>
+
+
+
+
+
+
+
+    輸入名字進行校驗：<input id="pu" type="text"> <span id="p" style="color: red"></span>
+
+
+
+</body>
+
+</html>
